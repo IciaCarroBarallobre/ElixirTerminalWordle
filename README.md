@@ -7,7 +7,7 @@ Git clone & play it!
 > iex.bat -S mix #Windows
 > iex -S mix #Linux
 iex > WordleTerminalGame.start()
-
+```
 
 ## Installation
 
