@@ -14,7 +14,7 @@ defmodule WordleTerminalGame.Words do
     {"strings", "Strings under the hood, are binary.", "Data Type"},
     {"floats", " Be careful! Not useful for money representation cause ", "Data Type"},
     {"enum",
-     "Module that provides a set of algorithms to work with enumerables (such as lists, maps and ranges).",
+     "Enum that provides a set of algorithms to work with enumerables (such as lists, maps and ranges).",
      "A Module"},
     {"livebook", "An app to write interactive & collaborative code notebooks in Elixir.",
      "Notebooks"},
