@@ -1,37 +1,43 @@
 defmodule WordleTerminalGame.Words do
   @moduledoc """
-  This module contain the list of existing answer and a pin out about them.
-  In a future maybe could be created using an external file.
+  Words has a module attribute which is a list that contains tuples of three elements ``(answer, explanation, clue)``.
+  - The first element of the tuple, is the Wordle answer.
+  - The second element of the tuple, is a detail about the answer.
+  - The third element of the tuple, is a clue about the answer.
   """
   @available_words [
     {"elixir",
      "Elixir is a dynamic, functional language for building scalable and maintainable applications.
-      It runs on the Erlang VM, known for creating low-latency, distributed, and fault-tolerant systems",
-     "A language"},
+      It runs on the Erlang VM, known for creating low-latency, distributed, and fault-tolerant systems.",
+     "It's a language."},
     {"erlang",
      "Erlang is a programming language used to build massively scalable soft real-time systems with requirements
-      on high availability. It runs on the Erlang VM, same as Elixir.", "A language"},
-    {"strings", "Strings under the hood, are binary.", "Data Type"},
-    {"floats", " Be careful! Not useful for money representation cause ", "Data Type"},
+      on high availability. It runs on the Erlang VM, same as Elixir.", "It's a language."},
+    {"strings", "Strings in Elixir are UTF-8 encoded binaries.", "Data type."},
+    {"floats",
+     " Floats (floating points) are not useful for representing money because cannot be stored exactly as it is in the memory.
+      You could use instead Integers.", "Data Type"},
     {"enum",
-     "Enum that provides a set of algorithms to work with enumerables (such as lists, maps and ranges).",
+     "Enum module provides a set of algorithms to work with enumerables (such as lists, maps and ranges).",
      "A Module"},
-    {"livebook", "An app to write interactive & collaborative code notebooks in Elixir.",
-     "Notebooks"},
+    {"livebook",
+     "Livebook is an app to write interactive & collaborative code notebooks in Elixir.",
+     "You can create notebooks with it."},
     {"mix",
-     "It's a build tool that ships with Elixir that provides tasks for creating, compiling,
-     testing your application, managing its dependencies and much more;",
-     "Build tool"},
-    {"iex", "Elixir's interactive shell", "Shell"},
-    {"exunit", "Unit testing framework for Elixir. ", "Test Framework"},
+     "Mix is a build tool that ships with Elixir that provides tasks for creating, compiling,
+     testing your application, managing its dependencies and much more.", "Build tool."},
+    {"iex", "IEx is the Elixir interactive shell.", "A shell."},
+    {"exunit", "ExUnit is a testing framework for Elixir. ", "A framework for testing."},
     {"exdoc",
-     "`mix docs` uses ExDoc to generate a static web page from the project documentation", "Docs Framework"}
-    # Add more in you want, in a future we can load using a external file
+     "`mix docs` uses ExDoc to generate a static web page from the project documentation.",
+     "A framework for documentation."}
+    # TODO: Add more words
   ]
 
   @doc """
-  Return a list of tuple which first element is the word related with Elixir
-  and the second is the detail or comment about the word.
+  Returns a list of tuples, its first element is a word related with Elixir,
+  its second element is a detail/comment about the word and,
+  its third element is a clue to guess the word.
   """
 
   @spec get :: [{binary, binary, binary}]
