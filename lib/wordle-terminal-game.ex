@@ -2,8 +2,10 @@ defmodule WordleTerminalGame do
   alias WordleTerminalGame.{Wordle, Words}
 
   @moduledoc """
-  This module start the terminal game, use `iex[.bat] -S mix`
-  to initialize the shell and then, inside shell run `WordleTerminalGame.start()`
+  This module contains a function ('start/0') to play Wordle with words
+  related to Elixir in the iex shell interactive WordleTerminalGame.
+
+  To initialize it:
 
   ```elixir
   > iex.bat -S mix #Windows
@@ -28,30 +30,38 @@ defmodule WordleTerminalGame do
     )
   end
 
+  defp guess_the_answer(answer, explanation) do
+    colorized_answer = IO.ANSI.green() <> answer <> IO.ANSI.reset()
+    IO.puts("Right!! The answer is #{colorized_answer}.")
+    :timer.sleep(1000);
+    IO.puts("Did you know that ... #{explanation} \n")
+    :timer.sleep(1000);
+  end
+
   @doc """
-    Giving a word as first argument (answer), something about the word as second argument (explanation)
-    and a clue of the word as third argument (clue), ask you to try guess the answer giving you the clue.
+    play/3 function asks you to try to guess the answer giving you a clue.
+    - It's first argument is the answer.
+    - It's second argument is an explanation related to the word (answer).
+    - It's third argument is a clue about the answer.
 
     In case of:
-     - **Right answer**: give you a comment about the answer and return to the start
+     - **Right answer**: The function prints the answer and the explanation and return you to the start/0 function.
      - **Wrong answer**:
-       - ... with **correct format** input: give you a comment about the answer and return to the start
-       - ... without **correct format** input: show you the error.
+       - ... with **correct format** input: The function gives you clues about the answer and returns to itself (play/3).
+       - ... without **correct format** input: The function shows you the error.
        - ... answering **exit**: end the game.
   """
   @spec play(binary, binary, binary) :: :ok
   def play(answer, explanation, clue) do
     guess =
-      IO.gets(
-        "Try to guess the word, contains #{String.length(answer)} letters and the clue is `#{clue}`: "
-      )
+      IO.gets("Contains #{String.length(answer)} letters, and a clue is `#{clue}`: ")
       |> String.replace("\n", "", trim: true)
       |> String.downcase()
 
     unless guess == "exit" do
-      result = Wordle.feedback(answer, guess)
+      response = Wordle.feedback(answer, guess)
 
-      case result do
+      case response do
         {:error, msg} ->
           IO.puts("Error: " <> msg)
           play(answer, explanation, clue)
@@ -60,28 +70,49 @@ defmodule WordleTerminalGame do
           colorized_result = colorize(result, guess)
 
           if Enum.all?(result, fn x -> x == :green end) do
-            colorized_result = colorize(result, guess)
-            IO.puts("Right! The answer is #{colorized_result}")
-            IO.puts("Do you know that ... #{explanation}")
+            guess_the_answer(guess, explanation)
             start()
           else
-            IO.puts("Try again, the answer isn't #{colorized_result}")
+            IO.puts("#{colorized_result}")
             play(answer, explanation, clue)
           end
       end
-    else
-      IO.puts("Bye!")
     end
   end
 
+  def explain_rules() do
+    rules =
+      "The game is about guessing a word related to Elixir. \n" <>
+        "=> Find a letter of the answer in its position, it will be shown in " <>
+        IO.ANSI.green() <>
+        "green. \n" <>
+        IO.ANSI.reset() <>
+        "=> Find a letter of the answer but not in its position, it will be shown in " <>
+        IO.ANSI.yellow() <>
+        "yellow. \n" <>
+        IO.ANSI.reset() <>
+        "=> Don't guess the letter, it's going to be shown in " <>
+        IO.ANSI.black() <>
+        "grey. \n" <>
+        IO.ANSI.reset() <>
+        "You can exit when you want by answering 'exit'.\n"
+
+    IO.puts(rules)
+  end
+
   @doc """
-  Explain the game and if run taking into account your answer.
-  - If you answer anything that start with `y` (without caring the case), it's going to
-    choose a random word sets in `WordleTerminalGame.Words` and starts the game.
-  - End the game, if you answer anything that start with `n` (without caring the case).
-  - Otherwise, ask you if you want to play.
+  Start/0 function initialize the game and depending on your response:
+  - Answering something that starts with 'y' or 'Y',
+     - Explain how to play, the rules.
+     - Choose a random word sets in `WordleTerminalGame.Words` and starts the game.
+  - Answering anything that starts with 'n' or 'N', it ends the game.
+  - Answering other things, return you to the same function but with helpful information.
   """
   def start() do
+    IO.puts("-------------------------------------")
+    IO.puts("----- ELIXIR SHELL WORDLE GAME ------")
+    IO.puts("-------------------------------------")
+
     start_playing =
       IO.gets("Hey, do you want to play Wordle? (Y/N)")
       |> String.downcase()
@@ -89,34 +120,16 @@ defmodule WordleTerminalGame do
       |> String.at(0)
 
     case start_playing do
-      "y" ->
-        IO.puts("Cool! You have to guess a word.")
-        IO.puts("Rules:")
-
-        IO.puts(
-          "- If you find a letter and its position, the result is going to be in " <>
-            IO.ANSI.green() <> ":green" <> IO.ANSI.reset()
-        )
-
-        IO.puts(
-          "- If you find a letter, but not its position, the result is going to be in " <>
-          IO.ANSI.yellow() <> ":yellow" <> IO.ANSI.reset()
-        )
-
-        IO.puts("- If you don't find a letter, the result is going to be in " <>
-        IO.ANSI.black() <> ":gray" <> IO.ANSI.reset())
-
-        IO.puts("All words are related to Elixir :)")
-        IO.puts("You can exit when you want answering `exit`.")
-
-        {result, explanation, clue} = Words.get() |> Enum.random()
-        play(result, explanation, clue)
-
       "n" ->
-        IO.puts("Okidoki! Bye ;(")
+        :ok
+
+      "y" ->
+        explain_rules()
+        {answer, answer_explanation, clue} = Words.get() |> Enum.random()
+        play(answer, answer_explanation, clue)
 
       _ ->
-        IO.puts("Sorry :/ I don't understand you.")
+        IO.puts("I don't understand you, type yes or no.")
         start()
     end
   end
