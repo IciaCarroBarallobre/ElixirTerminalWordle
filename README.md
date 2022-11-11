@@ -4,7 +4,7 @@
 
 Do you dare to try a game? :) 
 
-![Example of match](images/Exampleofmatch.PNG)
+![Example of match](images/Exampleofgame.png)
 
 ## How to play?
 
