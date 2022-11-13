@@ -1,5 +1,5 @@
 defmodule WordleTerminalGame do
-  alias WordleTerminalGame.{Wordle, Words}
+  alias WordleTerminalGame.{Wordle, GenServerWords}
 
   @moduledoc """
   This module contains a function ('start/0') to play Wordle with words
@@ -109,7 +109,7 @@ defmodule WordleTerminalGame do
   - Answering other things, return you to the same function but with helpful information.
   """
   def start() do
-    {:ok, pid} = Words.start_link([])
+    {:ok, pid} = GenServerWords.start_link([])
     start(pid)
   end
 
@@ -129,14 +129,14 @@ defmodule WordleTerminalGame do
         :ok
 
       "y" ->
-        result = Words.pop(pid)
+        result = GenServerWords.pop(pid)
 
         unless result == nil do
           explain_rules()
           {answer, answer_explanation, clue} = result
           play(answer, answer_explanation, clue, pid)
         else
-          IO.puts("I haven't got more guessing words! :(")
+          IO.puts("Sorry, I haven't got more guessing words! :(")
         end
 
       _ ->
