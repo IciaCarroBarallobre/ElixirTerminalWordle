@@ -1,5 +1,5 @@
 defmodule WordleTerminalGame do
-  alias WordleTerminalGame.{Wordle, Words}
+  alias WordleTerminalGame.{Wordle, GenServerWords}
 
   @moduledoc """
   This module contains a function ('start/0') to play Wordle with words
@@ -33,9 +33,9 @@ defmodule WordleTerminalGame do
   defp guess_the_answer(answer, explanation) do
     colorized_answer = IO.ANSI.green() <> answer <> IO.ANSI.reset()
     IO.puts("Right!! The answer is #{colorized_answer}.")
-    :timer.sleep(1000);
+    :timer.sleep(1000)
     IO.puts("Did you know that ... #{explanation} \n")
-    :timer.sleep(1000);
+    :timer.sleep(1000)
   end
 
   @doc """
@@ -51,8 +51,8 @@ defmodule WordleTerminalGame do
        - ... without **correct format** input: The function shows you the error.
        - ... answering **exit**: end the game.
   """
-  @spec play(binary, binary, binary) :: :ok
-  def play(answer, explanation, clue) do
+  @spec play(binary, binary, binary, pid) :: :ok
+  def play(answer, explanation, clue, pid) do
     guess =
       IO.gets("Contains #{String.length(answer)} letters, and a clue is `#{clue}`: ")
       |> String.replace("\n", "", trim: true)
@@ -64,17 +64,17 @@ defmodule WordleTerminalGame do
       case response do
         {:error, msg} ->
           IO.puts("Error: " <> msg)
-          play(answer, explanation, clue)
+          play(answer, explanation, clue, pid)
 
         {:ok, result} ->
           colorized_result = colorize(result, guess)
 
           if Enum.all?(result, fn x -> x == :green end) do
             guess_the_answer(guess, explanation)
-            start()
+            start(pid)
           else
             IO.puts("#{colorized_result}")
-            play(answer, explanation, clue)
+            play(answer, explanation, clue, pid)
           end
       end
     end
@@ -109,6 +109,11 @@ defmodule WordleTerminalGame do
   - Answering other things, return you to the same function but with helpful information.
   """
   def start() do
+    {:ok, pid} = GenServerWords.start_link([])
+    start(pid)
+  end
+
+  def start(pid) do
     IO.puts("-------------------------------------")
     IO.puts("----- ELIXIR SHELL WORDLE GAME ------")
     IO.puts("-------------------------------------")
@@ -124,13 +129,19 @@ defmodule WordleTerminalGame do
         :ok
 
       "y" ->
-        explain_rules()
-        {answer, answer_explanation, clue} = Words.get() |> Enum.random()
-        play(answer, answer_explanation, clue)
+        result = GenServerWords.pop(pid)
+
+        unless result == nil do
+          explain_rules()
+          {answer, answer_explanation, clue} = result
+          play(answer, answer_explanation, clue, pid)
+        else
+          IO.puts("Sorry, I haven't got more guessing words! :(")
+        end
 
       _ ->
         IO.puts("I don't understand you, type yes or no.")
-        start()
+        start(pid)
     end
   end
 end

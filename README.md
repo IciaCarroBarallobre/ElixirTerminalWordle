@@ -2,7 +2,7 @@
 
 **ElixirTerminalWordle** allows you to play a version of ``Wordle`` where all the **words are related to Elixir**.
 
-Do you dare to try a game? :) 
+Do you dare to try a game? :)
 
 ![Example of match](images/Exampleofgame.png)
 
@@ -12,7 +12,7 @@ Do you dare to try a game? :)
 
 - **Step 1**: Install [Elixir](https://elixir-lang.org/install.html). As a prerequisite for elixir installation, you have to have [Erlang](https://www.erlang.org/downloads.html) installed (> 0.23).
 
-- **Step 2**: Download the project. 
+- **Step 2**: Download the project.
   - `git clone https://github.com/IciaCarroBarallobre/ElixirTerminalWordle`
 - **Step 3**: Go to the project folder and install Mix dependencies.
   - 1. Go to the project folder:
