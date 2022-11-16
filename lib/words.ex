@@ -51,11 +51,11 @@ defmodule WordleTerminalGame.Words do
 
   ## Examples
 
-  iex> WordleTerminalGame.Words.pop(MapSet.new([1]))
-  {1, #MapSet<[]>}
+    iex> Words.pop(MapSet.new([1]))
+    {1, %MapSet{}}
 
-  iex> WordleTerminalGame.Words.pop(MapSet.new([]))
-  {nil, #MapSet<[]>}
+    iex> Words.pop(MapSet.new([]))
+    {nil, %MapSet{}}
 
   """
   @spec pop(MapSet.t(any())) :: {any(), MapSet.t(any())}
